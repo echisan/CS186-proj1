@@ -1,6 +1,7 @@
 package simpledb;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * BufferPool manages the reading and writing of pages into memory from
@@ -16,13 +17,14 @@ public class BufferPool {
      * Bytes per page, including header.
      */
     public static final int PAGE_SIZE = 4096;
-
     /**
      * Default number of pages passed to the constructor. This is used by
      * other classes. BufferPool should use the numPages argument to the
      * constructor instead.
      */
     public static final int DEFAULT_PAGES = 50;
+    private final int maxBufSize;
+    private Map<PageId, Page> buf;
 
     /**
      * Creates a BufferPool that caches up to numPages pages.
@@ -31,6 +33,12 @@ public class BufferPool {
      */
     public BufferPool(int numPages) {
         // some code goes here
+        this.maxBufSize = numPages;
+
+    }
+
+    public BufferPool() {
+        this(DEFAULT_PAGES);
     }
 
     /**
@@ -50,8 +58,19 @@ public class BufferPool {
      */
     public Page getPage(TransactionId tid, PageId pid, Permissions perm)
             throws TransactionAbortedException, DbException {
-        // some code goes here
-        return null;
+
+        Page page = buf.get(pid);
+
+        if (page != null) return page;
+
+        if (buf.size() == maxBufSize) {
+            evictPage();
+        }
+
+        DbFile dbFile = Database.getCatalog().getDbFile(pid.getTableId());
+
+        Page readPage = dbFile.readPage(pid);
+        return buf.put(pid, readPage);
     }
 
     /**

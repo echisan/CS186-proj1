@@ -193,7 +193,7 @@ public class TupleDesc implements Serializable {
         // If you want to use TupleDesc as keys for HashMap, implement this so
         // that equal objects have equals hashCode() results
 //        throw new UnsupportedOperationException("unimplemented");
-        return super.hashCode();
+        return (this.typeAr.length << this.typeAr.length) * typeAr.length;
     }
 
     /**
