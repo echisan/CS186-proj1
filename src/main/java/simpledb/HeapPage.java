@@ -3,7 +3,6 @@ package simpledb;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -110,7 +109,7 @@ public class HeapPage implements Page {
         // Once we know the number of tuples per page, the number of bytes required to store the header is simply:
         //
         // headerBytes = ceiling(tupsPerPage/8)
-        return getNumTuples() / 8;
+        return (int) Math.ceil(getNumTuples() / 8.0);
 
     }
 
@@ -307,11 +306,18 @@ public class HeapPage implements Page {
 
     /**
      * Returns true if associated slot on this page is filled.
+     * 查看对应的位是否是1
      */
     public boolean isSlotUsed(int i) {
         // some code goes here
-        Tuple tuple = tuples[i];
-        return tuple != null;
+        int byteNum = i / 8;
+        int posInByte = i % 8;
+
+        byte tb = header[byteNum];
+
+        byte move = (byte) (tb >> posInByte);
+        byte res = (byte) (move & 1);
+        return res == 1;
     }
 
     /**
@@ -328,9 +334,16 @@ public class HeapPage implements Page {
      */
     public Iterator<Tuple> iterator() {
         final Tuple[] tuples = this.tuples;
-        // some code goes here
-        List<Tuple> tuples1 = Arrays.asList(tuples);
-        return tuples1.iterator();
+        Tuple[] itArr = new Tuple[tuples.length - getNumEmptySlots()];
+
+        int idx = 0;
+        for (Tuple tuple : tuples) {
+            if (tuple != null) {
+                itArr[idx] = tuple;
+                idx++;
+            }
+        }
+        return Arrays.asList(itArr).iterator();
     }
 
 }

@@ -72,7 +72,7 @@ public class RecordId implements Serializable {
     public int hashCode() {
         // some code goes here
 //        throw new UnsupportedOperationException("implement this");
-        return super.hashCode();
+        return pageId.hashCode() * 31 + tupleno;
     }
 
 }

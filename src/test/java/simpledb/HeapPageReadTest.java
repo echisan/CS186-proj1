@@ -93,6 +93,8 @@ public class HeapPageReadTest extends SimpleDbTestBase {
             IntField f0 = (IntField) tup.getField(0);
             IntField f1 = (IntField) tup.getField(1);
 
+//            System.out.println("row:"+row+" f0:"+f0+" f1:"+f1);
+
             assertEquals(EXAMPLE_VALUES[row][0], f0.getValue());
             assertEquals(EXAMPLE_VALUES[row][1], f1.getValue());
             row++;
@@ -113,8 +115,11 @@ public class HeapPageReadTest extends SimpleDbTestBase {
     @Test public void getSlot() throws Exception {
         HeapPage page = new HeapPage(pid, EXAMPLE_DATA);
 
-        for (int i = 0; i < 20; ++i)
-            assertTrue(page.isSlotUsed(i));
+        for (int i = 0; i < 20; ++i) {
+            boolean slotUsed = page.isSlotUsed(i);
+//            System.out.println(i+":"+slotUsed);
+            assertTrue(slotUsed);
+        }
 
         for (int i = 20; i < 504; ++i)
             assertFalse(page.isSlotUsed(i));
