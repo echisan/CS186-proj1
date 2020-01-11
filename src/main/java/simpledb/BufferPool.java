@@ -1,6 +1,7 @@
 package simpledb;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -34,7 +35,7 @@ public class BufferPool {
     public BufferPool(int numPages) {
         // some code goes here
         this.maxBufSize = numPages;
-
+        buf = new HashMap<>();
     }
 
     public BufferPool() {
@@ -70,7 +71,9 @@ public class BufferPool {
         DbFile dbFile = Database.getCatalog().getDbFile(pid.getTableId());
 
         Page readPage = dbFile.readPage(pid);
-        return buf.put(pid, readPage);
+        Page put = buf.put(pid, readPage);
+//        System.out.println("put data:"+put);
+        return readPage;
     }
 
     /**

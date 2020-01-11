@@ -2,6 +2,7 @@ package simpledb;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 /**
@@ -67,9 +68,42 @@ public class HeapFile implements DbFile {
     }
 
     // see DbFile.java for javadocs
+//    public Page readPage(PageId pid) {
+//        // some code goes here
+//        int pageno = pid.pageNumber();
+//
+//        try {
+//            DataInputStream dis = new DataInputStream(new FileInputStream(file));
+//            int skipBytes = dis.skipBytes((pageno - 1) * BufferPool.PAGE_SIZE);
+//            Debug.log("skipBytes: %d", skipBytes);
+//
+//            byte[] data = new byte[BufferPool.PAGE_SIZE];
+//            int readSize = dis.read(data);
+//            Debug.log("read size: %d", readSize);
+//
+//            return new HeapPage(new HeapPageId(pid.getTableId(), pid.pageNumber()), data);
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//            throw new IllegalArgumentException("file: " + file.getName() + " not found.");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            throw new IllegalArgumentException("cannot read page: " + pid + "from file: " + file.getName());
+//        }
+//    }
+
     public Page readPage(PageId pid) {
-        // some code goes here
-        return null;
+        Page page = null;
+        byte[] data = new byte[BufferPool.PAGE_SIZE];
+        try (RandomAccessFile raf = new RandomAccessFile(getFile(), "r")) {
+            int pos = pid.pageNumber() * BufferPool.PAGE_SIZE;
+            raf.seek(pos);
+            raf.read(data, 0, data.length);
+            page = new HeapPage((HeapPageId) pid, data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return page;
     }
 
     // see DbFile.java for javadocs
@@ -83,7 +117,7 @@ public class HeapFile implements DbFile {
      */
     public int numPages() {
         // some code goes here
-        return 0;
+        return (int) file.length() / BufferPool.PAGE_SIZE;
     }
 
     // see DbFile.java for javadocs
@@ -105,7 +139,7 @@ public class HeapFile implements DbFile {
     // see DbFile.java for javadocs
     public DbFileIterator iterator(TransactionId tid) {
         // some code goes here
-        return null;
+        return new DefaultDbFileIterator(this, tid);
     }
 
 }

@@ -1,7 +1,9 @@
 package simpledb;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,6 +18,8 @@ public class Tuple implements Serializable {
     // store data
     private final Field[] fields;
     private TupleDesc tupleDesc;
+
+    private RecordId recordId;
 
     /**
      * Create a new tuple with the specified schema (type).
@@ -49,7 +53,7 @@ public class Tuple implements Serializable {
      */
     public RecordId getRecordId() {
         // some code goes here
-        return null;
+        return recordId;
     }
 
     /**
@@ -59,6 +63,23 @@ public class Tuple implements Serializable {
      */
     public void setRecordId(RecordId rid) {
         // some code goes here
+        this.recordId = rid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tuple tuple = (Tuple) o;
+        return Arrays.equals(fields, tuple.fields) &&
+                Objects.equals(tupleDesc, tuple.tupleDesc);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(tupleDesc);
+        result = 31 * result + Arrays.hashCode(fields);
+        return result;
     }
 
     /**
