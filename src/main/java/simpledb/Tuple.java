@@ -126,20 +126,6 @@ public class Tuple implements Serializable {
      */
     public Iterator<Field> fields() {
         // some code goes here
-        final Field[] f = this.fields;
-        return new Iterator<Field>() {
-            int idx = 0;
-
-            @Override
-            public boolean hasNext() {
-                return idx > f.length - 1;
-            }
-
-            @Override
-            public Field next() {
-                idx++;
-                return f[idx - 1];
-            }
-        };
+        return Arrays.asList(this.fields).iterator();
     }
 }

@@ -11,7 +11,6 @@ public class Filter extends Operator {
 
     private Predicate predicate;
     private DbIterator dbIterator;
-    private DbIterator[] children;
 
     /**
      * Constructor accepts a predicate to apply and a child operator to read
@@ -70,13 +69,15 @@ public class Filter extends Operator {
     @Override
     public DbIterator[] getChildren() {
         // some code goes here
-        return this.children;
+        return new DbIterator[]{this.dbIterator};
     }
 
     @Override
     public void setChildren(DbIterator[] children) {
         // some code goes here
-        this.children = children;
+        if (this.dbIterator != children[0]) {
+            this.dbIterator = children[0];
+        }
     }
 
 }

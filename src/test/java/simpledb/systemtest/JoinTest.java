@@ -1,17 +1,24 @@
 package simpledb.systemtest;
 
+import org.junit.Test;
+import simpledb.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.junit.Test;
-
-import simpledb.*;
-
 public class JoinTest extends SimpleDbTestBase {
     private static final int COLUMNS = 2;
+
+    /**
+     * Make test compatible with older version of ant.
+     */
+    public static junit.framework.Test suite() {
+        return new junit.framework.JUnit4TestAdapter(JoinTest.class);
+    }
+
     public void validateJoin(int table1ColumnValue, int table1Rows, int table2ColumnValue,
-            int table2Rows)
+                             int table2Rows)
             throws IOException, DbException, TransactionAbortedException {
         // Create the two tables
         HashMap<Integer, Integer> columnSpecification = new HashMap<Integer, Integer>();
@@ -54,23 +61,21 @@ public class JoinTest extends SimpleDbTestBase {
         Database.getBufferPool().transactionComplete(tid);
     }
 
-    @Test public void testSingleMatch()
+    @Test
+    public void testSingleMatch()
             throws IOException, DbException, TransactionAbortedException {
         validateJoin(1, 1, 1, 1);
     }
 
-    @Test public void testNoMatch()
+    @Test
+    public void testNoMatch()
             throws IOException, DbException, TransactionAbortedException {
         validateJoin(1, 2, 2, 10);
     }
 
-    @Test public void testMultipleMatch()
+    @Test
+    public void testMultipleMatch()
             throws IOException, DbException, TransactionAbortedException {
         validateJoin(1, 3, 1, 3);
-    }
-
-    /** Make test compatible with older version of ant. */
-    public static junit.framework.Test suite() {
-        return new junit.framework.JUnit4TestAdapter(JoinTest.class);
     }
 }
